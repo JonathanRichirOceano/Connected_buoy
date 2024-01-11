@@ -1,6 +1,7 @@
 ---
 title: "Sambat analyses"
 output: html_document
+author: "Jonathan Richir"
 date: "2023"
 ---
 
