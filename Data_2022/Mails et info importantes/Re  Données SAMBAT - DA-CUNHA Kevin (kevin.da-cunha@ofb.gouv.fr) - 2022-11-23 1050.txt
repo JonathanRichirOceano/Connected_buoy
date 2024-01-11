@@ -1,0 +1,133 @@
+﻿ RE: Données SAMBAT
+Sujet :
+RE: Données SAMBAT
+De :
+DA-CUNHA Kevin <kevin.da-cunha@ofb.gouv.fr>
+Date :
+23/11/2022, 10:50
+Pour :
+"Lovina Fullgrabe" <lovina.fullgrabe@stareso.com>
+
+Salut Lovina,
+
+Juste une petite précision, le changement d’heure n’à pas été effectué sur la bouée encore, elle à donc une heure d’avance depuis qu’on a reculé depuis le 30 Octobre.
+
+A plus tard
+
+Kévin
+
+ 
+
+De : Lovina Fullgrabe <lovina.fullgrabe@stareso.com>
+Envoyé : mardi 22 novembre 2022 09:54
+À : DA-CUNHA Kevin <kevin.da-cunha@ofb.gouv.fr>
+Objet : Re: Données SAMBAT
+
+ 
+
+Nickel c'est bon j'ai toute la série complète et compilée depuis le 5 janvier jusqu'à aujourd'hui. Merci !!
+
+Comme ça je t'envoie quelques graphs et résultats dans la semaine.
+
+A pluch,
+
+Lovina
+
+Le 22/11/2022 à 09:27, DA-CUNHA Kevin a écrit :
+
+    Salut Lovina,
+
+    J’ai bien vu ton mail, as-tu reçu tout les mails que j’ai transféré ?
+
+    Je continue de tout te transférer les données.
+
+    Dit-moi si les dossiers sont bon ?
+
+    A plus tard
+
+    Kévin
+
+     
+
+    De : Lovina Fullgrabe <lovina.fullgrabe@stareso.com>
+    Envoyé : mardi 22 novembre 2022 09:14
+    À : de Freitas, kevin <kevin.da-cunha@ofb.gouv.fr>
+    Objet : Re: Données SAMBAT
+
+     
+
+    Resalut! Désolée si tu as bien reçu le mail ci-dessous mais étant donné que ma boite mail déconne et ne délivre pas toujours les mails je voulais m'assurer que tu l'avais bien reçu.
+
+    Bonne journée à toi,
+
+    ici c'est tempête
+
+    Bises
+
+    Le 22/11/2022 à 01:31, Lovina Fullgrabe a écrit :
+
+        Salut Kévin,
+
+        J'espère que ça roule pour toi!
+
+        J'ai compilé toute la donnée SAMBAT stockée en intégrant tes remarques (e.g. temps de sortie de la sonde) mais je me rend compte que je n'ai pas toute la donnée et donc 2 petits trous dans la série avec de la donnée manquante :
+
+        - entre le 2022-01-20 et le 2022-01-28 (janvier) non-inclus
+        -  entre 2022-07-13 et 2022-07-21 (juillet) non-inclus
+
+        Aurais-tu des fichiers couvrant ces dates ?
+
+        Bises,
+
+        Lovina
+
+         
+
+        -- 
+
+        Lovina Fullgrabe
+
+         
+
+        STARESO (STAtion de REcherche Sous-marine et Océanographique)
+
+        Pointe de la Revellata, BP33
+
+        20260 Calvi
+
+         
+
+        06 33 46 49 23
+
+    -- 
+
+    Lovina Fullgrabe
+
+     
+
+    STARESO (STAtion de REcherche Sous-marine et Océanographique)
+
+    Pointe de la Revellata, BP33
+
+    20260 Calvi
+
+     
+
+    06 33 46 49 23
+
+-- 
+
+Lovina Fullgrabe
+
+ 
+
+STARESO (STAtion de REcherche Sous-marine et Océanographique)
+
+Pointe de la Revellata, BP33
+
+20260 Calvi
+
+ 
+
+06 33 46 49 23
+

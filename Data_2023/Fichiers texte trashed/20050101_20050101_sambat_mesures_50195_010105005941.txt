@@ -1,0 +1,9 @@
+SAMBAT Sea Ti  C/T/D/Odo/Fluo/pH GPS : 50195 
+V:0,Pression (0/50),m
+V:1,Température (-5/35),°C
+V:2,Salinité (2/42),g/l
+V:3,Oxygène (0/20),mgl
+V:4,PH (0/14),pH
+V:5,Fluorescence (0/50),µgl
+V:6,Tension batterie,V
+010105005941 -0.083 19.581 0.010 8.971 5.728 0.063 10.797 

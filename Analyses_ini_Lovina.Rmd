@@ -1,0 +1,383 @@
+---
+title: "Sambat analyses"
+output: html_document
+date: "2022-11-21"
+---
+
+
+```{r}
+library(vroom)
+library(readr)
+library(reshape2)
+library(ggplot2)
+library(scales)
+library(lubridate)
+library(tidyr)
+library(xlsx)
+setwd("D:/PNMCCA/SAMBAT Suivis sonde NKE")
+```
+
+
+```{r}
+# Read all the files and create a FileName column to store filenames
+
+list_of_files <- list.files(path = "D:/PNMCCA/SAMBAT Suivis sonde NKE/Data/Fichiers textes/", recursive = TRUE,
+                            pattern = "\\.txt$", 
+                            full.names = TRUE)
+
+df1 <- vroom(list_of_files, skip = 8, col_names = NULL)
+
+df1$Datetime <- as.POSIXct(df1$X1,format="%d%m%y%H%M%S")
+
+colnames(df1) <- c("del", "Pression", "Temperature", "Salinite", "Oxygene", "pH", "Fluorescence", "Tension","del","Datetime")
+df <- df1[, -c(1,9)]
+```
+
+
+
+```{r}
+start <- read_delim("Data/Fichiers csv/all begining corrected.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE, col_names = FALSE,
+    skip = 0)
+start<- start[-1,]
+
+middle <- read_delim("Data/Fichiers csv/17-02-2022_21-07-2022b.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE, col_names = FALSE,
+    skip = 0)
+middle<- middle[-1,]
+
+
+a <- rbind(start, middle)
+
+a$Datetime <- as.POSIXct(a$X1, format="%d/%m/%Y %H:%M")
+
+colnames(a) <- c("del", "Pression", "Temperature", "Salinite", "Oxygene", "pH", "Fluorescence", "Tension", "Datetime")
+a <- a[, -1]
+save <- a
+
+
+```
+
+
+```{r}
+### DONNNEES BRUTES
+
+yes <- rbind(df, a)
+yes$date <- as.Date(yes$Datetime)
+yes$mois <- month(yes$date, label = TRUE)
+
+
+class(yes$Datetime)
+brut <- yes %>% arrange(Datetime)
+brut <- brut[-c(37462:37465),]
+
+colnames <- read_delim("Data/Fichiers csv/17-02-2022_21-07-2022b.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE, col_names = FALSE, locale = locale(encoding = "windows-1252"), skip = 0)
+colnames <- colnames[1, 2:8]
+colnames(brut)[1:7] <- colnames
+saveRDS(brut, "Données brutes.rds")
+
+
+
+### PLOT 
+
+go1 <- melt(yes[, c(2:6,8)], id.vars= "Datetime")
+go1$value <- as.numeric(go1$value)
+
+#intervention <- c(as.POSIXct("2022-02-17 09:23:00"),as.POSIXct("2022-04-04 16:23:00"), as.POSIXct("2022-05-20 09:23:00"), as.POSIXct("2022-07-21 10:23:00"), as.POSIXct("2022-08-29 09:23:00"), as.POSIXct("2022-10-25 10:23:00"))
+
+
+ggplot(go1, aes(Datetime, value)) +
+  geom_point(size = 0.4) +
+    scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("")+
+    geom_vline(aes(xintercept = as.POSIXct("2022-01-05 19:12:00")), col = "blue", alpha = 0.4) +
+      geom_vline(aes(xintercept = as.POSIXct("2022-01-13 09:33:41")), col = "blue", alpha = 0.4) +
+        geom_vline(aes(xintercept = as.POSIXct("2022-04-14 09:33:41")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-01-20 09:33:41")), col = "blue", alpha = 0.4) +
+  geom_vline(aes(xintercept = as.POSIXct("2022-01-28 19:33:41")), col = "blue", alpha = 0.4) +
+geom_vline(aes(xintercept = as.POSIXct("2022-02-17 09:23:00")), col = "blue", alpha = 0.4) +
+  geom_vline(aes(xintercept = as.POSIXct("2022-04-04 16:23:00")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-05-20 09:23:00")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-07-21 10:23:00")), col = "blue", alpha = 0.4) +
+      geom_vline(aes(xintercept = as.POSIXct("2022-08-12 09:33:41")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-08-29 09:23:00")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-10-25 10:23:00")), col = "blue", alpha = 0.4) +
+#geom_vline(aes(xintercept = intervention)) +
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Temperature='Température\n (°C)',
+                                      Salinite='Salinité ',
+                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      pH='pH ',
+                                      Fluorescence= "Fluorescence \n (µgl)")))+
+  theme_bw()
+
+
+#ggsave("Données brutes OK.png")
+
+#write.xlsx(yes, "Donnees brutes 2.xlsx")
+
+```
+
+```{r}
+
+### DONNEES NETTOYEES avec correction
+
+yes <- rbind(df, a)
+yes$date <- as.Date(yes$Datetime)
+yes$mois <- month(yes$date, label = TRUE)
+yes$Salinite[yes$date >= "2022-07-05" & yes$date <= "2022-07-21"] <- NA
+yes <- dplyr::filter(yes, pH > 8.20 & Fluorescence < 40)
+yes$Temperature<- as.numeric(yes$Temperature)
+yes$Oxygene <- as.numeric(yes$Oxygene)
+yes$Salinite <- as.numeric(yes$Salinite)
+yes$pH <- as.numeric(yes$pH)
+yes$Fluorescence <- as.numeric(yes$Fluorescence)
+yes$Salinite[yes$Datetime == "2022-07-07 09:23:00"] <- NA
+yes$Salinite[yes$Datetime == "2022-07-07 09:23:32"] <- NA
+yes$Salinite[yes$date >= "2022-07-10" & yes$date <= "2022-07-21"] <- NA
+yes$Salinite[yes$date == "2022-08-13"] <- NA
+yes$Salinite[yes$date == "2022-08-12"] <- NA
+yes$Salinite[yes$date >= "2022-10-25"] <- NA
+yes$Salinite[yes$Salinite < 35.5 ] <- NA
+yes$Fluorescence[yes$Fluorescence > 10 ] <- NA
+
+
+yes <- mutate(yes, Fluorescence = case_when(
+    date >= "2022-09-25" &  date <= "2022-10-25"~ (Fluorescence*0.6),
+  TRUE ~ Fluorescence 
+  ))
+
+yes <- mutate(yes, pH = case_when(
+  date >= "2022-07-15" &  date <= "2022-07-21" ~ (pH + 0.01),
+  TRUE ~ pH 
+  ))
+
+go <- melt(yes[, c(2:6,8)], id.vars= "Datetime")
+go$value <- as.numeric(go$value)
+
+#write.xlsx2(yes, "Donnees corrigées et nettoyées compilées.xlsx")
+
+cor <- yes %>% arrange(Datetime)
+cor <- cor[-c(37370:37373),]
+
+colnames <- read_delim("Data/Fichiers csv/17-02-2022_21-07-2022b.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE, col_names = FALSE, locale = locale(encoding = "windows-1252"), skip = 0)
+colnames <- colnames[1, 2:8]
+colnames(cor)[1:7] <- colnames
+saveRDS(cor, "Données corrigées et nettoyées.rds")
+
+
+
+##### PLOT ######
+#sans interventions
+
+ggplot(go, aes(Datetime, value)) +
+  geom_line()+
+  #geom_point(size = 0.1) +
+    scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("")+
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Temperature='Température\n (°C)',
+                                      Salinite='Salinité ',
+                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      pH='pH ',
+                                      Fluorescence= "Fluorescence \n (µgl)")))+
+  theme_bw()
+
+#ggsave("2 fluoro geomligne.png")
+
+
+month <- melt(yes[, c(2:6,10)], id.vars= "mois")
+month$value <- as.numeric(month$value)
+
+month %>% group_by(variable, mois) %>% summarise_all(min, na.rm = TRUE)
+month %>% group_by(variable, mois) %>% summarise_all(max, na.rm = TRUE)
+M <- month %>% group_by(variable, mois) %>% summarise_all(mean, na.rm = TRUE)
+
+
+#avec interventions
+
+ggplot(go, aes(Datetime, value)) +
+  geom_point(size = 0.1) +
+    scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("")+
+    geom_vline(aes(xintercept = as.POSIXct("2022-01-05 19:12:00")), col = "blue", alpha = 0.4) +
+      geom_vline(aes(xintercept = as.POSIXct("2022-01-13 09:33:41")), col = "blue", alpha = 0.4) +
+        geom_vline(aes(xintercept = as.POSIXct("2022-04-14 09:33:41")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-01-20 09:33:41")), col = "blue", alpha = 0.4) +
+  geom_vline(aes(xintercept = as.POSIXct("2022-01-28 19:33:41")), col = "blue", alpha = 0.4) +
+geom_vline(aes(xintercept = as.POSIXct("2022-02-17 09:23:00")), col = "blue", alpha = 0.4) +
+  geom_vline(aes(xintercept = as.POSIXct("2022-04-04 16:23:00")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-05-20 09:23:00")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-07-21 10:23:00")), col = "blue", alpha = 0.4) +
+      geom_vline(aes(xintercept = as.POSIXct("2022-08-12 09:33:41")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-08-29 09:23:00")), col = "blue", alpha = 0.4) +
+    geom_vline(aes(xintercept = as.POSIXct("2022-10-25 10:23:00")), col = "blue", alpha = 0.4) +
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Temperature='Température\n °C\n',
+                                      Salinite='Salinité ',
+                                      Oxygene= bquote('Oxygène dissous \n mgl'),
+                                      pH='pH ',
+                                      Fluorescence= "Fluorescence \n µgl")))+
+  theme_bw()
+
+
+
+
+m <- melt(yes[, c(2:6,10)], id.vars= "mois")
+m <- m %>% drop_na(mois)
+m$mois <- as.factor(m$mois)
+m$value <- as.numeric(m$value)
+
+ggplot(m, aes(mois, value)) +
+  geom_boxplot()+
+  xlab("\nDate") +
+  ylab("")+
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Temperature='Température\n (°C)',
+                                      Salinite='Salinité ',
+                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      pH='pH ',
+                                      Fluorescence= "Fluorescence \n (µgl)")))+
+  theme_bw()
+
+
+#ggsave("Boxplot OK.png")
+
+```
+
+
+Ajouter données cumuls de pluie
+
+```{r}
+table(yes$mois)
+library(readxl)
+pluie <- read_excel("Data/Precipitation.xlsx")
+pluie$mois <- factor(pluie$mois, levels = c("janv",  "févr", "mars", "avr",  "mai",  "juin",  "juil",  "août",  "sept",  "oct","nov", "déc"))
+all <- full_join(yes, pluie, by= "mois")
+
+ggplot(pluie, aes(mois, Pluie, col = Site)) +
+  geom_point()+
+  xlab("\nDate") +
+  ylab("")+
+  facet_grid(Paramètre~., scales = "free", labeller = as_labeller(c(Pluie='Précipitation\n (mm)'))) +
+    theme_bw()
+  theme(legend.position = "none")
+ 
+ggsave("Pluie legend.png")
+
+m2 <- melt(all[, c(2:6,10, 11, 12)], id.vars= "mois")
+m2 <- m2 %>% drop_na(mois)
+m2$mois <- as.factor(m2$mois)
+m2$value <- as.numeric(m2$value)
+
+View(m2)
+ggplot(m2, aes(mois, value)) +
+  geom_boxplot()+
+  xlab("\nDate") +
+  ylab("")+
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Temperature='Température\n (°C)',
+                                      Salinite='Salinité ',
+                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      pH='pH ',
+                                      Fluorescence= "Fluorescence \n (µgl)",
+                                      Pluie = "Cumul mensuel de pluie\n (mm)")))+
+  theme_bw()
+
+
+ggsave("Boxplot OK.png")
+
+```
+
+
+
+Focus 18 août 
+
+```{r}
+xstart <- as.POSIXct("2022-08-17 23:00:00")
+xend <- as.POSIXct("2022-08-19 01:00:00")
+  
+ggplot(go, aes(Datetime, value)) +
+  geom_line()+
+    scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("")+
+  facet_grid(variable~., scales = "free")+
+  theme_bw() +
+ geom_rect(data = go[c(1, 50000, 100000, 130000, 180000),], aes(xmin = xstart, xmax = xend, 
+  ymin = -Inf, ymax = Inf), fill = "red", alpha = 0.2)
+
+ggsave("Time series - 18 août en rouge.png")
+
+
+ggplot(yes, aes(Datetime, Temperature)) +
+  geom_line()+
+    scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("°C")+
+  theme_bw() +
+ geom_rect(data = yes[1,], aes(xmin = xstart, xmax = xend, 
+  ymin = -Inf, ymax = Inf),alpha = 0.2 , fill = "red")
+
+ggsave("Temperature - 18 août en rouge.png")
+
+
+focus <- dplyr::filter(yes, date > "2022-08-01" & date < "2022-09-01")
+focus <- melt(focus[, c(2:6,8)], id.vars= "Datetime")
+focus$value <- as.numeric(focus$value)
+xstart2 <- as.POSIXct("2022-08-13 23:00:00")
+xend2 <- as.POSIXct("2022-08-15 01:00:00")
+
+ggplot(focus, aes(Datetime, value)) +
+  geom_point(size = 0.1)+
+    #scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("°C")+
+  theme_bw() +
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Temperature='Température\n (°C)',
+                                      Salinite='Salinité ',
+                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      pH='pH ',
+                                      Fluorescence= "Fluorescence \n (µgl)")))+
+ geom_rect(data = focus[c(1, 4000, 8000, 10000, 12000),], aes(xmin = xstart, xmax = xend, 
+  ymin = -Inf, ymax = Inf),alpha = 0.2 , fill = "red") +
+   geom_rect(data = focus[c(1, 4000, 8000, 10000, 12000),], aes(xmin = xstart2, xmax = xend2, 
+  ymin = -Inf, ymax = Inf),alpha = 0.2 , fill = "cyan")
+
+ggsave("Time series du 1er aout au 1 sept - 18 août en rouge et 14 aout en bleu.png")
+```
+
+Zoom sur mars 2022 fluorescence et oxygène
+
+```{r}
+focus2 <- dplyr::filter(yes, date > "2022-03-01" & date < "2022-03-31")
+focus2 <- melt(focus2[, c(4,6,8)], id.vars= "Datetime")
+focus$value <- as.numeric(focus$value)
+xstart2 <- as.POSIXct("2022-08-13 23:00:00")
+xend2 <- as.POSIXct("2022-08-15 01:00:00")
+
+ggplot(focus2, aes(Datetime, value)) +
+  geom_point(size = 1)+
+    #scale_x_datetime(breaks = "1 month", date_labels = "%b") +
+  xlab("\nDate") +
+  ylab("°C")+
+  theme_bw() +
+  facet_grid(variable~., scales = "free",  
+             labeller = as_labeller(c(Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      Fluorescence= "Fluorescence \n (µgl)")))
+
+ geom_rect(data = focus[c(1, 4000, 8000, 10000, 12000),], aes(xmin = xstart, xmax = xend, 
+  ymin = -Inf, ymax = Inf),alpha = 0.2 , fill = "red") +
+   geom_rect(data = focus[c(1, 4000, 8000, 10000, 12000),], aes(xmin = xstart2, xmax = xend2, 
+  ymin = -Inf, ymax = Inf),alpha = 0.2 , fill = "cyan")
+
+ggsave("zoom fluo ligne.png")
+
+```
+
