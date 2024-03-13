@@ -106,9 +106,9 @@ ggplot(go1, aes(Datetime, value)) +
   facet_grid(variable~., scales = "free",  
              labeller = as_labeller(c(Temperature='Température\n (°C)',
                                       Salinite='Salinité ',
-                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      Oxygene= bquote('Oxygène dissous \n (mg/L)'),
                                       pH='pH ',
-                                      Fluorescence= "Fluorescence \n (µgl)"))) +
+                                      Fluorescence= "Chla \n (µg/L)"))) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
@@ -197,9 +197,9 @@ ggplot(go1, aes(Datetime, value)) +
   facet_grid(variable~., scales = "free",  
              labeller = as_labeller(c(Temperature='Température \n (°C)',
                                       Salinite='Salinité',
-                                      Oxygene= bquote('Oxygène dissous \n (mg/l)'),
+                                      Oxygene= bquote('Oxygène dissous \n (mg/L)'),
                                       pH='pH',
-                                      Fluorescence= "Fluorescence \n (µg/l)"))) +
+                                      Fluorescence= "Chla \n (µg/L)"))) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
@@ -268,7 +268,7 @@ ggsave("Figures/p.sal.raw.png", width = 5, height = 2.5, dpi = 300)
 unique(filter(raw.ts, Salinite < 10)["date"])
 unique(filter(raw.ts, Salinite < 32 & Salinite > 31)["date"])
 
-buoy.plot(df. = raw.ts, var. = "Oxygene", ylab. = "Oxygène dissous (mg/l)")
+buoy.plot(df. = raw.ts, var. = "Oxygene", ylab. = "Oxygène dissous (mg/L)")
 (p.oxy.raw <- p.)
 rm(p.)
 ggsave("Figures/p.oxy.raw.png", width = 5, height = 2.5, dpi = 300)
@@ -278,7 +278,7 @@ buoy.plot(df. = raw.ts, var. = "pH", ylab. = "pH")
 rm(p.)
 ggsave("Figures/p.pH.raw.png", width = 5, height = 2.5, dpi = 300)
 
-buoy.plot(df. = raw.ts, var. = "Fluorescence", ylab. = "Fluorescence (µg/l)")
+buoy.plot(df. = raw.ts, var. = "Fluorescence", ylab. = "Chla (µg/L)")
 (p.fluo.raw <- p.)
 rm(p.)
 ggsave("Figures/p.fluo.raw.png", width = 5, height = 2.5, dpi = 300)
@@ -316,9 +316,9 @@ ggplot(go1, aes(Datetime, value)) +
   facet_grid(variable~., scales = "free",  
              labeller = as_labeller(c(Temperature='Température \n (°C)',
                                       Salinite='Salinité ',
-                                      Oxygene= bquote('Oxygène dissous \n (mg/l)'),
+                                      Oxygene= bquote('Oxygène dissous \n (mg/L)'),
                                       pH='pH',
-                                      Fluorescence= "Fluorescence \n (µg/l)"))) +
+                                      Fluorescence= "Chla \n (µg/L)"))) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
@@ -338,7 +338,7 @@ unique(filter(yes.new, Salinite < 20)[, "date"])
 yes.new <- dplyr::filter(yes.new, pH > 8.20 #already the case obviously see previous plot, so no effect of that filter but keep it
                          & Fluorescence < 40 #idem
                          )
-yes.new$Salinite[yes.new$Salinite < 35.7 ] <- NA #35.5 for Lovina filter, changed to 36
+yes.new$Salinite[yes.new$Salinite < 35.5 ] <- NA #35.5 for Lovina filter, changed to 36
 yes.new$Fluorescence[yes.new$Fluorescence > 10 ] <- NA
 
 # some more correction here below for Lovina 2022 data; see if any reasons to perform such correction for specific periods of deployment based on probe records from sea campaings by Stareso. 
@@ -361,7 +361,7 @@ ggplot(go1, aes(Datetime, value)) +
   ylab("") +
   geom_vline(aes(xintercept = last(clean.2022$Datetime)), col = "blue", alpha = 0.4) +
   facet_grid(variable~., scales = "free",  
-             labeller = as_labeller(c(Temperature='Température\n (°C)', Salinite='Salinité ', Oxygene= bquote('Oxygène dissous \n (mg/l)'), pH='pH ', Fluorescence= "Fluorescence \n (µg/l)"))) +
+             labeller = as_labeller(c(Temperature='Température\n (°C)', Salinite='Salinité ', Oxygene= bquote('Oxygène dissous \n (mg/l)'), pH='pH ', Fluorescence= "Chla \n (µg/L)"))) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
@@ -397,7 +397,7 @@ ggplot(go1, aes(Datetime, value)) +
   ylab("") +
   geom_vline(aes(xintercept = last(clean.2022$Datetime)), col = "blue", alpha = 0.4) +
   facet_grid(variable~., scales = "free",  
-             labeller = as_labeller(c(Temperature='Température \n (°C)', Salinite='Salinité', Oxygene= bquote('Oxygène dissous \n (mg/l)'), pH='pH', Fluorescence= "Fluorescence \n (µg/l)"))) +
+             labeller = as_labeller(c(Temperature='Température \n (°C)', Salinite='Salinité', Oxygene= bquote('Oxygène dissous \n (mg/L)'), pH='pH', Fluorescence= "Chla \n (µg/L)"))) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
@@ -438,7 +438,7 @@ buoy.plot.clean(df. = clean.ts, var. = "Salinite", ylab. = "Salinité")
 rm(p.)
 ggsave("Figures/p.sal.clean.png", width = 5, height = 2.5, dpi = 300)
 
-buoy.plot.clean(df. = clean.ts, var. = "Oxygene", ylab. = "Oxygène dissous (mg/l)")
+buoy.plot.clean(df. = clean.ts, var. = "Oxygene", ylab. = "Oxygène dissous (mg/L)")
 (p.oxy.clean <- p.)
 rm(p.)
 ggsave("Figures/p.oxy.clean.png", width = 5, height = 2.5, dpi = 300)
@@ -448,7 +448,7 @@ buoy.plot.clean(df. = clean.ts, var. = "pH", ylab. = "pH")
 rm(p.)
 ggsave("Figures/p.pH.clean.png", width = 5, height = 2.5, dpi = 300)
 
-buoy.plot.clean(df. = clean.ts, var. = "Fluorescence", ylab. = "Fluorescence (µg/l)")
+buoy.plot.clean(df. = clean.ts, var. = "Fluorescence", ylab. = "Chla (µg/L)")
 (p.fluo.clean <- p.)
 rm(p.)
 ggsave("Figures/p.fluo.clean.png", width = 5, height = 2.5, dpi = 300)
@@ -481,7 +481,7 @@ p.sal <- p + geom_point(data=diff.sal.ts,colour="red")
 p <- ggplot(raw.ts, aes(x=Datetime, y=Oxygene)) + 
   geom_point() +
   xlab("") +
-  ylab("Oxygène dissous (mg/l)")
+  ylab("Oxygène dissous (mg/L)")
 p.O2 <- p + geom_point(data=diff.O2.ts,colour="red")
 
 p <- ggplot(raw.ts, aes(x=Datetime, y=pH)) + 
@@ -493,7 +493,7 @@ p.pH <- p + geom_point(data=diff.pH.ts,colour="red")
 p <- ggplot(raw.ts, aes(x=Datetime, y=Fluorescence)) + 
   geom_point() +
   xlab("") +
-  ylab("Fluorescence (µgl)")
+  ylab("Chla (µg/L)")
 p.fluo <- p + geom_point(data=diff.fluo.ts,colour="red")
 
 rm(p)
@@ -568,7 +568,7 @@ rm(p.,y.)
 ggsave("Figures/p.sal.del.png", width = 5, height = 2.5, dpi = 300)
 
 y. <- c(min(raw.ts$Oxygene, na.rm=T), max(raw.ts$Oxygene, na.rm=T))
-buoy.plot.del.(df. = raw.ts, var. = "Oxygene", ylab. = "Oxygène dissous (mg/l)", ylim. = y.)
+buoy.plot.del.(df. = raw.ts, var. = "Oxygene", ylab. = "Oxygène dissous (mg/L)", ylim. = y.)
 names(diff.O2.ts)[names(diff.O2.ts) == 'Oxygene'] <- "plot.var."
 (p.oxy.del. <- p. + geom_point(data=diff.O2.ts,colour="red",size = 0.8))
 rm(p.,y.)
@@ -582,7 +582,7 @@ rm(p.,y.)
 ggsave("Figures/p.pH.del.png", width = 5, height = 2.5, dpi = 300)
 
 y. <- c(min(raw.ts$Fluorescence, na.rm=T), 10)
-buoy.plot.del.(df. = raw.ts, var. = "Fluorescence", ylab. = "Fluorescence (µg/l)", ylim. = y.)
+buoy.plot.del.(df. = raw.ts, var. = "Fluorescence", ylab. = "Chla (µg/L)", ylim. = y.)
 names(diff.fluo.ts)[names(diff.fluo.ts) == 'Fluorescence'] <- "plot.var."
 (p.fluo.del. <- p. + geom_point(data=diff.fluo.ts,colour="red",size = 0.8))
 rm(p.,y.)
@@ -609,9 +609,9 @@ ggplot(m, aes(mois, value)) +
   facet_grid(variable~., scales = "free",  
              labeller = as_labeller(c(Temperature='Température \n (°C)',
                                       Salinite='Salinité',
-                                      Oxygene= bquote('Oxygène dissous \n (mg/l)'),
+                                      Oxygene= bquote('Oxygène dissous \n (mg/L)'),
                                       pH='pH',
-                                      Fluorescence= "Fluorescence \n (µg/l)")))+
+                                      Fluorescence= "Chla \n (µg/L)")))+
   theme_bw()
 
 
@@ -655,9 +655,9 @@ p.buoy <- ggplot(m2, aes(mois, value)) +
   facet_grid(variable~., scales = "free",  
              labeller = as_labeller(c(Temperature='Température\n (°C)',
                                       Salinite='Salinité ',
-                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      Oxygene= bquote('Oxygène dissous \n (mg/L)'),
                                       pH='pH ',
-                                      Fluorescence= "Fluorescence \n (µgl)"
+                                      Fluorescence= "Chla \n (µg/L)"
                                       #,Pluie = "Cumul mensuel de pluie\n (mm)"
                                       )))+
   theme_bw()
@@ -713,9 +713,9 @@ ggplot(focus, aes(Datetime, value)) +
   facet_grid(variable~., scales = "free",  
              labeller = as_labeller(c(Temperature='Température\n (°C)',
                                       Salinite='Salinité ',
-                                      Oxygene= bquote('Oxygène dissous \n (mgl)'),
+                                      Oxygene= bquote('Oxygène dissous \n (mg/L)'),
                                       pH='pH ',
-                                      Fluorescence= "Fluorescence \n (µgl)")))+
+                                      Fluorescence= "Chla \n (µg/L)")))+
  geom_rect(data = focus[c(1, 4000, 8000, 10000, 12000),], aes(xmin = xstart, xmax = xend, 
   ymin = -Inf, ymax = Inf),alpha = 0.2 , fill = "red") +
    geom_rect(data = focus[c(1, 4000, 8000, 10000, 12000),], aes(xmin = xstart2, xmax = xend2, 
